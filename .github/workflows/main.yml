@@ -1,1 +1,40 @@
+name: Playwright API Crawl
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  api-crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run API crawl tests
+        run: npx playwright test tests/example.spec.ts
+
+      - name: Upload API crawl artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-crawl-json
+          path: |
+            saved_api_requests.json
+            postman_api_requests.json
+            all_discovered_api_urls.json
+          if-no-files-found: ignore
