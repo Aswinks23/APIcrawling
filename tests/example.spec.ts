@@ -25,7 +25,7 @@ test('API crawling and export', async ({ page }) => {
   const captured: Array<any> = [];
   let idCounter = 1;
 
-  // 🟢 Ensure export directory exists
+  // Ensure export directory exists
   fs.mkdirSync('ExportApi', { recursive: true });
 
   page.on('request', (req) => {
@@ -87,12 +87,12 @@ test('API crawling and export', async ({ page }) => {
   await page.goto(TARGET_URL, { waitUntil: 'networkidle' });
   await page.waitForTimeout(5000);
 
-  // 🟢 Save raw captured entries
+  // Save raw captured entries
   const outPath = 'ExportApi/saved_api_requests.json';
   fs.writeFileSync(outPath, JSON.stringify(captured, null, 2));
   console.log(`✓ Saved ${captured.length} API requests to ${outPath}`);
 
-  // 🟢 Prepare Postman collection
+  // Prepare Postman collection
   const collection = {
     info: {
       name: 'Discovered API Requests',
