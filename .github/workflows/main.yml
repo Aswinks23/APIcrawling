@@ -40,9 +40,12 @@ jobs:
               echo "seconds=7200" >> $GITHUB_OUTPUT
               ;;
           esac
+        shell: bash
 
       - name: Wait before running
+        # This step waits for 0s, 120s, 1800s, or 7200s depending on the selected option
         run: sleep ${{ steps.delay.outputs.seconds }}
+        shell: bash
 
       - name: Checkout repo
         uses: actions/checkout@v4
