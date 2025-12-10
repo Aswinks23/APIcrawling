@@ -1,14 +1,10 @@
 name: Playwright API Crawl
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       delay_option:
-        description: "When to run the crawl"
+        description: "When to start the crawl"
         required: true
         default: run_now
         type: choice
@@ -23,29 +19,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Show selected option
+        run: echo "Selected delay_option=${{ github.event.inputs.delay_option }}"
+
       - name: Resolve delay in seconds
         id: delay
+        shell: bash
         run: |
+          echo "delay_option=${{ github.event.inputs.delay_option }}"
           case "${{ github.event.inputs.delay_option }}" in
             run_now)
-              echo "seconds=0" >> $GITHUB_OUTPUT
+              echo "seconds=0" >> "$GITHUB_OUTPUT"
               ;;
             run_after_2_min)
-              echo "seconds=120" >> $GITHUB_OUTPUT
+              echo "seconds=120" >> "$GITHUB_OUTPUT"
               ;;
             run_after_30_min)
-              echo "seconds=1800" >> $GITHUB_OUTPUT
+              echo "seconds=1800" >> "$GITHUB_OUTPUT"
               ;;
             run_after_2_hours)
-              echo "seconds=7200" >> $GITHUB_OUTPUT
+              echo "seconds=7200" >> "$GITHUB_OUTPUT"
               ;;
           esac
-        shell: bash
 
-      - name: Wait before running
-        # This step waits for 0s, 120s, 1800s, or 7200s depending on the selected option
-        run: sleep ${{ steps.delay.outputs.seconds }}
+      - name: Wait before starting crawl
         shell: bash
+        run: |
+          echo "Sleeping for ${{ steps.delay.outputs.seconds }} seconds..."
+          sleep ${{ steps.delay.outputs.seconds }}
 
       - name: Checkout repo
         uses: actions/checkout@v4
