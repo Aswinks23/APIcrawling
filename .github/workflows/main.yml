@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Show selected delay
-        run: echo "Selected delay_minutes=${{ github.event.inputs.delay_minutes }}"
+      - name: Show entered delay
+        run: echo "Given delay_minutes=${{ github.event.inputs.delay_minutes }}"
 
       - name: Resolve delay in seconds
         id: delay
