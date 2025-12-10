@@ -6,12 +6,44 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      delay_option:
+        description: "When to run the crawl"
+        required: true
+        default: run_now
+        type: choice
+        options:
+          - run_now
+          - run_after_2_min
+          - run_after_30_min
+          - run_after_2_hours
 
 jobs:
   api-crawl:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve delay in seconds
+        id: delay
+        run: |
+          case "${{ github.event.inputs.delay_option }}" in
+            run_now)
+              echo "seconds=0" >> $GITHUB_OUTPUT
+              ;;
+            run_after_2_min)
+              echo "seconds=120" >> $GITHUB_OUTPUT
+              ;;
+            run_after_30_min)
+              echo "seconds=1800" >> $GITHUB_OUTPUT
+              ;;
+            run_after_2_hours)
+              echo "seconds=7200" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Wait before running
+        run: sleep ${{ steps.delay.outputs.seconds }}
+
       - name: Checkout repo
         uses: actions/checkout@v4
 
